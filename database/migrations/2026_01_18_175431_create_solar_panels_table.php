@@ -1,0 +1,38 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('solar_panels', function (Blueprint $table) {
+            $table->id();
+            $table->string('product_name');
+            $table->string('model')->nullable();
+            $table->decimal('wattage', 8, 2); // in watts
+            $table->string('cell_type')->nullable(); // Monocrystalline, Polycrystalline, etc.
+            $table->decimal('efficiency_percentage', 5, 2)->nullable();
+            $table->integer('quantity_in_stock')->default(0);
+            $table->decimal('cost_price', 10, 2);
+            $table->decimal('selling_price', 10, 2);
+            $table->string('supplier')->nullable();
+            $table->text('description')->nullable();
+            $table->string('warranty')->nullable();
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('solar_panels');
+    }
+};
