@@ -47,6 +47,14 @@
         <div class="lg:col-span-1 space-y-6">
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                 <h2 class="text-lg font-bold text-gray-900 mb-4">Stock Management</h2>
+                <div class="p-6 border-b border-gray-50 flex justify-between items-center">
+                    <h3 class="font-bold text-gray-900">Stock Alerts</h3>
+                <a href="{{ route('lowstock') }}">
+                    <span class="px-2 py-1 bg-red-50 text-red-600 text-[14px] font-bold rounded uppercase">
+                        {{ $stockAlerts->count() }} Items Low
+                    </span>
+                </a>
+                </div>
                 <div class="grid grid-cols-1 gap-3">
                     <a href="{{ route('inverters.create') }}" class="flex items-center p-3 rounded-xl border border-gray-100 hover:bg-blue-50 hover:border-blue-200 transition-all group">
                         <span class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600 mr-4 group-hover:scale-110 transition-transform">➕</span>
@@ -125,6 +133,8 @@
                 @endif
             </div>
         </div>
+
+        
     </div>
 </div>
 @endsection

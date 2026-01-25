@@ -16,6 +16,7 @@ Auth::routes();
 Route::middleware('auth')->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/lowstock', [DashboardController::class, 'show'])->name('lowstock');
     Route::get('/home', [DashboardController::class, 'index'])->name('home');
     
     // Transactions

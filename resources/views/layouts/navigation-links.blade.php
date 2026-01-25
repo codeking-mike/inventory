@@ -2,7 +2,6 @@
     Dashboard
 </x-nav-link>
 
-<div class="text-xs font-semibold text-gray-400 uppercase tracking-wider px-3 mt-6 mb-2">Inventory</div>
 
 <x-nav-link href="{{ route('inverters.index') }}" :active="request()->routeIs('inverters.*')">Inverters</x-nav-link>
 <x-nav-link href="{{ route('avrs.index') }}" :active="request()->routeIs('avrs.*')">AVRs</x-nav-link>
