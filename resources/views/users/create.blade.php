@@ -14,7 +14,7 @@
 
     <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
         <div class="p-8">
-            <form method="POST" action="{{ route('register') }}">
+            <form method="POST" action="{{ route('users.store') }}">
                 @csrf
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">

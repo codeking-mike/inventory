@@ -8,12 +8,32 @@ use App\Http\Controllers\SolarPanelController;
 use App\Http\Controllers\BatteryController;
 use App\Http\Controllers\UpsController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\UserController;
 
 Route::redirect('/', '/dashboard');
 
-Auth::routes();
+Auth::routes(['register' => false]); // Disable public registration
+
+// Only Admins can access these
+Route::middleware(['auth', 'admin'])->group(function () {
+    
+    // Move the registration logic here   
+    // User Management (List and Delete)
+    Route::put('/users/{user}/reset-password', [UserController::class, 'resetPassword'])->name('users.reset_password');
+    Route::get('users/create', [App\Http\Controllers\UserController::class, 'create'])->name('users.create');
+    Route::post('/users', [App\Http\Controllers\UserController::class, 'store'])->name('users.store');
+    Route::get('/users', [App\Http\Controllers\UserController::class, 'index'])->name('users.index');
+    Route::delete('/users/{user}', [App\Http\Controllers\UserController::class, 'destroy'])->name('users.destroy');
+    Route::resource('users', UserController::class);
+});
 
 Route::middleware('auth')->group(function () {
+
+    //profile update routes
+    Route::get('/profile', [UserController::class, 'profile'])->name('profile.edit');
+    Route::put('/profile', [UserController::class, 'profileUpdate'])->name('profile.update');
+    Route::put('/profile/password', [UserController::class, 'passwordUpdate'])->name('profile.password.update');
+
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/lowstock', [DashboardController::class, 'show'])->name('lowstock');
