@@ -34,26 +34,36 @@ class InverterController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'product_name' => 'required|string|max:255',
-            'model' => 'nullable|string|max:255',
-            'power_rating' => 'required|numeric|min:0',
-            'quantity_in_stock' => 'required|integer|min:0',
-            'cost_price' => 'nullable|numeric|min:0',
-            'selling_price' => 'nullable|numeric|min:0',
-            'supplier' => 'nullable|string|max:255',
-            'description' => 'nullable|string',
-            'warranty' => 'nullable|string|max:255',
-            'remarks' => 'nullable|string|max:255',
-        ]);
+        // 1. Validate the split power fields along with the rest
+    $validated = $request->validate([
+        'product_name' => 'required|string|max:255',
+        'model' => 'nullable|string|max:255',
+        'power_value' => 'required|numeric|min:0', // Validating the number
+        'power_unit' => 'required|string|in:KW,KVA', // Validating the unit
+        'quantity_in_stock' => 'required|integer|min:0',
+        'cost_price' => 'nullable|numeric|min:0',
+        'selling_price' => 'nullable|numeric|min:0',
+        'supplier' => 'nullable|string|max:255',
+        'description' => 'nullable|string',
+        'warranty' => 'nullable|string|max:255',
+        'remarks' => 'nullable|string|max:255',
+    ]);
 
-        $inverter = Inverter::create($validated);
+    // 2. Concatenate the value and unit into the 'power_rating' string
+    $validated['power_rating'] = $request->power_value . $request->power_unit;
+
+    // 3. Remove the temporary split keys so they don't interfere with the create() method
+    unset($validated['power_value'], $validated['power_unit']);
+
+    // 4. Create the record
+    $inverter = Inverter::create($validated);
 
         // Create transaction record
         $transaction = Transaction::create([
             'date' => now()->toDateString(),
             'reference' => '', // Will be updated below
             'product_type' => 'inverter',
+            'transaction_type'=> 'Added',
             'particulars' => 'Added ' . $inverter->product_name . ' (' . $inverter->model . ')',
             'qty' => $inverter->quantity_in_stock,
             'remarks' => $request->remarks ?? 'Initial stock added'
@@ -92,7 +102,7 @@ class InverterController extends Controller
         $validated = $request->validate([
             'product_name' => 'required|string|max:255',
             'model' => 'nullable|string|max:255',
-            'power_rating' => 'required|numeric|min:0',
+            'power_rating' => 'required|string|max:255',
             'quantity_in_stock' => 'required|integer|min:0',
             'cost_price' => 'nullable|numeric|min:0',
             'selling_price' => 'nullable|numeric|min:0',
@@ -111,6 +121,7 @@ class InverterController extends Controller
                 'date' => now()->toDateString(),
                 'reference' => '', // Will be updated below
                 'product_type' => 'inverter',
+                'transaction_type'=> ($qtyDifference > 0 ? 'Added' : 'Removed'),
                 'particulars' => ($qtyDifference > 0 ? 'Stock added: ' : 'Stock removed: ') . $inverter->product_name,
                 'qty' => $qtyDifference,
                 'remarks' => $request->remarks ?? 'Quantity updated from ' . $oldQty . ' to ' . $inverter->quantity_in_stock
@@ -152,6 +163,7 @@ class InverterController extends Controller
             'particulars' => 'required|string|max:255',
             'qty' => 'required|integer|min:1',
             'date' => 'required|date',
+            'waybill' => 'nullable|string|max:255',
             'remarks' => 'nullable|string|max:255',
         ]);
 
@@ -174,8 +186,10 @@ class InverterController extends Controller
             'date' => $validated['date'],
             'reference' => '', // Will be updated below
             'product_type' => 'inverter',
+            'transaction_type'=>'Removed',
             'particulars' => $validated['particulars'],
-            'qty' => -$validated['qty'], // Negative for removal
+            'waybill_number'=> $validated['waybill'],
+            'qty' => $validated['qty'], // Negative for removal
             'remarks' => $validated['remarks'] ?? 'Inverter removed from stock'
         ]);
 

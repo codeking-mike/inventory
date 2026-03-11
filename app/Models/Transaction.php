@@ -10,8 +10,10 @@ class Transaction extends Model
         'date',
         'reference',
         'product_type',
+        'transaction_type',
         'particulars',
         'qty',
+        'waybill_number',
         'remarks',
     ];
 

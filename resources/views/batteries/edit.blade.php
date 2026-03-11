@@ -1,99 +1,104 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Battery')
-
 @section('content')
-<div class="max-w-2xl mx-auto">
-    <h1 class="text-3xl font-bold mb-8 text-gray-800">Edit Battery</h1>
+<div class="p-6 max-w-4xl mx-auto">
+    {{-- Header --}}
+    <div class="mb-8 flex justify-between items-center">
+        <div>
+            <h2 class="text-2xl font-bold text-gray-900">Edit Battery</h2>
+            <p class="text-sm text-gray-500">Updating technical specs for <span class="font-semibold text-emerald-600">{{ $battery->product_name }}</span></p>
+        </div>
+        <a href="{{ route('batteries.index') }}" class="text-sm font-bold text-gray-400 hover:text-gray-600 transition">
+            Cancel & Return
+        </a>
+    </div>
 
-    <div class="bg-white rounded-lg shadow p-8">
-        <form action="{{ route('batteries.update', $battery) }}" method="POST">
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <form action="{{ route('batteries.update', $battery) }}" method="POST" class="p-8">
             @csrf
             @method('PUT')
             
-            <div class="mb-4">
-                <label class="block text-gray-700 font-semibold mb-2">Product Name*</label>
-                <input type="text" name="product_name" class="w-full border border-gray-300 rounded px-3 py-2" value="{{ old('product_name', $battery->product_name) }}" required>
-                @error('product_name') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
-            </div>
-
-            <div class="mb-4">
-                <label class="block text-gray-700 font-semibold mb-2">Model</label>
-                <input type="text" name="model" class="w-full border border-gray-300 rounded px-3 py-2" value="{{ old('model', $battery->model) }}">
-                @error('model') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
-            </div>
-
-            <div class="mb-4">
-                <label class="block text-gray-700 font-semibold mb-2">Capacity (Ah)*</label>
-                <input type="number" name="capacity" step="0.01" class="w-full border border-gray-300 rounded px-3 py-2" value="{{ old('capacity', $battery->capacity) }}" required>
-                @error('capacity') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
-            </div>
-
-            <div class="mb-4">
-                <label class="block text-gray-700 font-semibold mb-2">Voltage (V)*</label>
-                <input type="number" name="voltage" step="0.01" class="w-full border border-gray-300 rounded px-3 py-2" value="{{ old('voltage', $battery->voltage) }}" required>
-                @error('voltage') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
-            </div>
-
-            <div class="mb-4">
-                <label class="block text-gray-700 font-semibold mb-2">Chemistry</label>
-                <select name="chemistry" class="w-full border border-gray-300 rounded px-3 py-2">
-                    <option value="">Select Chemistry</option>
-                    <option value="Lithium" {{ $battery->chemistry == 'Lithium' ? 'selected' : '' }}>Lithium</option>
-                    <option value="Lead-acid" {{ $battery->chemistry == 'Lead-acid' ? 'selected' : '' }}>Lead-acid</option>
-                    <option value="LiFePO4" {{ $battery->chemistry == 'LiFePO4' ? 'selected' : '' }}>LiFePO4</option>
-                    <option value="Gel" {{ $battery->chemistry == 'Gel' ? 'selected' : '' }}>Gel</option>
-                    <option value="AGM" {{ $battery->chemistry == 'AGM' ? 'selected' : '' }}>AGM</option>
-                </select>
-                @error('chemistry') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
-            </div>
-
-            <div class="mb-4">
-                <label class="block text-gray-700 font-semibold mb-2">Quantity in Stock*</label>
-                <input type="number" name="quantity_in_stock" class="w-full border border-gray-300 rounded px-3 py-2" value="{{ old('quantity_in_stock', $battery->quantity_in_stock) }}" required>
-                @error('quantity_in_stock') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
-            </div>
-
-            <div class="grid grid-cols-2 gap-4 mb-4">
-                <div>
-                    <label class="block text-gray-700 font-semibold mb-2">Cost Price*</label>
-                    <input type="number" name="cost_price" step="0.01" class="w-full border border-gray-300 rounded px-3 py-2" value="{{ old('cost_price', $battery->cost_price) }}" required>
-                    @error('cost_price') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                {{-- Product Name --}}
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-gray-700 uppercase tracking-wider">Product Name <span class="text-red-400">*</span></label>
+                    <input type="text" name="product_name" value="{{ old('product_name', $battery->product_name) }}" required
+                        class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 outline-none transition bg-gray-50/30">
+                    @error('product_name') <p class="text-red-500 text-[10px] font-bold italic">{{ $message }}</p> @enderror
                 </div>
-                <div>
-                    <label class="block text-gray-700 font-semibold mb-2">Selling Price*</label>
-                    <input type="number" name="selling_price" step="0.01" class="w-full border border-gray-300 rounded px-3 py-2" value="{{ old('selling_price', $battery->selling_price) }}" required>
-                    @error('selling_price') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
+
+                {{-- Model --}}
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-gray-700 uppercase tracking-wider">Model</label>
+                    <input type="text" name="model" value="{{ old('model', $battery->model) }}"
+                        class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 outline-none transition">
+                </div>
+
+                {{-- Capacity & Voltage Row --}}
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-gray-700 uppercase tracking-wider">Capacity <span class="text-red-400">*</span></label>
+                    <div class="relative">
+                        <input type="text" name="capacity" step="0.01" value="{{ old('capacity', $battery->capacity) }}" required
+                            class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 outline-none transition" placeholder="e.g. 200KWh">
+                        
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-gray-700 uppercase tracking-wider">Voltage (V) <span class="text-red-400">*</span></label>
+                    <div class="relative">
+                        <input type="number" name="voltage" step="0.01" value="{{ old('voltage', $battery->voltage) }}" required
+                            class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 outline-none transition" placeholder="e.g. 12">
+                        <span class="absolute right-4 top-3 text-gray-400 text-xs font-bold italic">Volts</span>
+                    </div>
+                </div>
+
+                {{-- Chemistry Dropdown --}}
+                 <div class="space-y-2">
+                    <label class="text-xs font-bold text-gray-700 uppercase tracking-wider">Chemistry </label>
+                    <input type="text" name="chemistry" value="{{ old('chemistry', $battery->chemistry) }}" required
+                        class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 outline-none transition">
+                </div>
+
+                {{-- Quantity --}}
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-gray-700 uppercase tracking-wider">Quantity in Stock <span class="text-red-400">*</span></label>
+                    <input type="number" name="quantity_in_stock" value="{{ old('quantity_in_stock', $battery->quantity_in_stock) }}" required
+                        class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 outline-none transition">
+                </div>
+
+                {{-- Pricing --}}
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-gray-700 uppercase tracking-wider">Cost Price (₦)</label>
+                    <input type="number" name="cost_price" step="0.01" value="{{ old('cost_price', $battery->cost_price) }}"
+                        class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 outline-none transition bg-red-50/10">
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-gray-700 uppercase tracking-wider">Selling Price (₦)</label>
+                    <input type="number" name="selling_price" step="0.01" value="{{ old('selling_price', $battery->selling_price) }}"
+                        class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 outline-none transition bg-emerald-50/10">
+                </div>
+
+                {{-- Full Width Areas --}}
+                <div class="col-span-full space-y-2">
+                    <label class="text-xs font-bold text-gray-700 uppercase tracking-wider">Description</label>
+                    <textarea name="description" rows="3" 
+                        class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 outline-none transition">{{ old('description', $battery->description) }}</textarea>
+                </div>
+
+                <div class="col-span-full space-y-2">
+                    <label class="text-xs font-bold text-gray-700 uppercase tracking-wider">Transaction Remarks</label>
+                    <textarea name="remarks" rows="2" placeholder="Internal notes..."
+                        class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 outline-none transition">{{ old('remarks', $battery->remarks) }}</textarea>
                 </div>
             </div>
 
-            <div class="mb-4">
-                <label class="block text-gray-700 font-semibold mb-2">Supplier</label>
-                <input type="text" name="supplier" class="w-full border border-gray-300 rounded px-3 py-2" value="{{ old('supplier', $battery->supplier) }}">
-                @error('supplier') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
-            </div>
-
-            <div class="mb-4">
-                <label class="block text-gray-700 font-semibold mb-2">Description</label>
-                <textarea name="description" rows="4" class="w-full border border-gray-300 rounded px-3 py-2">{{ old('description', $battery->description) }}</textarea>
-                @error('description') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
-            </div>
-
-            <div class="mb-4">
-                <label class="block text-gray-700 font-semibold mb-2">Warranty</label>
-                <input type="text" name="warranty" class="w-full border border-gray-300 rounded px-3 py-2" value="{{ old('warranty', $battery->warranty) }}" placeholder="e.g., 2 years">
-                @error('warranty') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
-            </div>
-
-            <div class="mb-6">
-                <label class="block text-gray-700 font-semibold mb-2">Transaction Remarks</label>
-                <textarea name="remarks" rows="3" class="w-full border border-gray-300 rounded px-3 py-2" placeholder="Add any remarks about this transaction...">{{ old('remarks') }}</textarea>
-                @error('remarks') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
-            </div>
-
-            <div class="flex space-x-4">
-                <button type="submit" class="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2 rounded">Update Battery</button>
-                <a href="{{ route('batteries.index') }}" class="bg-gray-400 hover:bg-gray-500 text-white px-6 py-2 rounded">Cancel</a>
+            <div class="mt-8 pt-6 border-t border-gray-50 flex justify-end items-center">
+                <button type="submit" class="px-10 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg shadow-emerald-100 transition-all transform hover:-translate-y-1">
+                    Update Battery Details
+                </button>
             </div>
         </form>
     </div>

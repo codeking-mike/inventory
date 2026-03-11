@@ -50,6 +50,7 @@ class UpsController extends Controller
             'date' => now()->toDateString(),
             'reference' => '', // Will be updated below
             'product_type' => 'ups',
+            'transaction_type' => 'Added',
             'particulars' => 'Added ' . $ups->product_name . ' (' . $ups->model . ')',
             'qty' => $ups->quantity_in_stock,
             'remarks' => $request->remarks ?? 'Initial stock added'
@@ -65,25 +66,25 @@ class UpsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Ups $ups)
+    public function show(Ups $up)
     {
-        return view('ups.show', compact('ups'));
+        return view('ups.show', compact('up'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Ups $ups)
+    public function edit(Ups $up)
     {
-        return view('ups.edit', compact('ups'));
+        return view('ups.edit', compact('up'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Ups $ups)
+    public function update(Request $request, Ups $up)
     {
-        $oldQty = $ups->quantity_in_stock;
+        $oldQty = $up->quantity_in_stock;
 
         $validated = $request->validate([
             'product_name' => 'required|string|max:255',
@@ -97,18 +98,18 @@ class UpsController extends Controller
             'remarks' => 'nullable|string|max:255',
         ]);
 
-        $ups->update($validated);
+        $up->update($validated);
 
         // Create transaction record if quantity changed
-        $qtyDifference = $ups->quantity_in_stock - $oldQty;
+        $qtyDifference = $up->quantity_in_stock - $oldQty;
         if ($qtyDifference != 0) {
             $transaction = Transaction::create([
                 'date' => now()->toDateString(),
                 'reference' => '', // Will be updated below
                 'product_type' => 'ups',
-                'particulars' => ($qtyDifference > 0 ? 'Stock added: ' : 'Stock removed: ') . $ups->product_name,
+                'particulars' => ($qtyDifference > 0 ? 'Stock added: ' : 'Stock removed: ') . $up->product_name,
                 'qty' => $qtyDifference,
-                'remarks' => $request->remarks ?? 'Quantity updated from ' . $oldQty . ' to ' . $ups->quantity_in_stock
+                'remarks' => $request->remarks ?? 'Quantity updated from ' . $oldQty . ' to ' . $up->quantity_in_stock
             ]);
 
             // Generate and update reference with format: 000 + date + id
@@ -124,7 +125,7 @@ class UpsController extends Controller
      */
     public function destroy(Ups $ups)
     {
-        $ups->delete();
+        $up->delete();
         return redirect()->route('ups.index')->with('success', 'UPS deleted successfully');
     }
 
@@ -138,7 +139,9 @@ class UpsController extends Controller
     {
         $validated = $request->validate([
             'ups_id' => 'required|exists:ups,id',
+            'particulars' => 'required|string|max:255',
             'quantity' => 'required|integer|min:1',
+            'waybill' => 'nullable|string|max:255',
             'remarks' => 'nullable|string|max:255',
         ]);
 
@@ -157,8 +160,10 @@ class UpsController extends Controller
             'date' => now()->toDateString(),
             'reference' => '', // Will be updated below
             'product_type' => 'ups',
-            'particulars' => 'Removed ' . $validated['quantity'] . ' of ' . $ups->product_name,
-            'qty' => -$validated['quantity'],
+            'transaction_type' => 'Removed',
+            'particulars' => $validated['particulars'],
+            'waybill_number' => $validated['waybill'],
+            'qty' => $validated['quantity'],
             'remarks' => $validated['remarks'] ?? 'Stock removal'
         ]);
 

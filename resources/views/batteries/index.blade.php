@@ -59,8 +59,8 @@
                                 </td>
                                 <td class="px-6 py-4 text-center">
                                     <div class="inline-flex flex-col">
-                                        <span class="text-sm font-bold text-gray-700">{{ number_format($battery->voltage) }}V</span>
-                                        <span class="text-[10px] font-medium text-orange-600 bg-orange-50 px-1.5 py-0.5 rounded uppercase leading-tight">{{ number_format($battery->capacity) }}Ah</span>
+                                        <span class="text-sm font-bold text-gray-700">{{ $battery->voltage }}V</span>
+                                        <span class="text-[10px] font-medium text-orange-600 bg-orange-50 px-1.5 py-0.5 rounded uppercase leading-tight">{{ $battery->capacity }}</span>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 text-center">

@@ -37,15 +37,23 @@ class BatteryController extends Controller
         $validated = $request->validate([
             'product_name' => 'required|string|max:255',
             'model' => 'nullable|string|max:255',
-            'capacity' => 'required|numeric|min:0',
-            'voltage' => 'required|numeric|min:0',
             'chemistry' => 'nullable|string|max:255',
+            'power_value' => 'required|numeric|min:0', // Validating the number
+            'power_unit' => 'required|string|in:KWh,Ah', // Validating the unit
+            'voltage' => 'required|numeric|min:0',
             'quantity_in_stock' => 'required|integer|min:0',
             'cost_price' => 'nullable|numeric|min:0',
             'selling_price' => 'nullable|numeric|min:0',
             'description' => 'nullable|string',
             'remarks' => 'nullable|string|max:255',
         ]);
+
+        // 2. Concatenate the value and unit into the 'capacity' string
+    $validated['capacity'] = $request->power_value . $request->power_unit;
+
+    // 3. Remove the temporary split keys so they don't interfere with the create() method
+    unset($validated['power_value'], $validated['power_unit']);
+
 
         $battery = Battery::create($validated);
 
@@ -54,6 +62,7 @@ class BatteryController extends Controller
             'date' => now()->toDateString(),
             'reference' => '', // Will be updated below
             'product_type' => 'battery',
+            'transaction_type' => 'Added',
             'particulars' => 'Added ' . $battery->product_name . ' (' . $battery->model . ')',
             'qty' => $battery->quantity_in_stock,
             'remarks' => $request->remarks ?? 'Initial stock added'
@@ -92,7 +101,7 @@ class BatteryController extends Controller
         $validated = $request->validate([
             'product_name' => 'required|string|max:255',
             'model' => 'nullable|string|max:255',
-            'capacity' => 'required|numeric|min:0',
+            'capacity' => 'required|string|max:255',
             'voltage' => 'required|numeric|min:0',
             'chemistry' => 'nullable|string|max:255',
             'quantity_in_stock' => 'required|integer|min:0',
@@ -143,7 +152,9 @@ class BatteryController extends Controller
     {
         $validated = $request->validate([
             'battery_id' => 'required|exists:batteries,id',
+            'particulars' => 'required|string|max:255',
             'quantity' => 'required|integer|min:1',
+            'waybill' => 'nullable|string|max:255',
             'remarks' => 'nullable|string|max:255',
         ]);
 
@@ -161,8 +172,10 @@ class BatteryController extends Controller
             'date' => now()->toDateString(),
             'reference' => '', // Will be updated below
             'product_type' => 'battery',
-            'particulars' => 'Removed ' . $validated['quantity'] . ' of ' . $battery->product_name,
-            'qty' => -$validated['quantity'],
+            'transaction_type' => 'Removed',
+            'particulars' => $validated['particulars'] ?? $validated['quantity'] . ' of ' . $battery->product_name,
+            'waybill_number' => $validated['waybill'],
+            'qty' => $validated['quantity'],
             'remarks' => $validated['remarks'] ?? 'Stock removal'
         ]);
 

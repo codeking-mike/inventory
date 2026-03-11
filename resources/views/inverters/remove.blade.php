@@ -46,8 +46,8 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Particulars / Reason <span class="text-red-400">*</span></label>
-                        <input type="text" name="particulars" class="w-full rounded-lg border-gray-200 focus:border-red-500 focus:ring-red-500 transition-all shadow-sm" value="{{ old('particulars') }}" placeholder="e.g. Invoice #9921 - Zenith Bank" required>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Reason for Removal <span class="text-red-400">*</span></label>
+                        <input type="text" name="particulars" class="w-full rounded-lg border-gray-200 focus:border-red-500 focus:ring-red-500 transition-all shadow-sm" value="{{ old('particulars') }}" placeholder="e.g. Supplied to customer" required>
                         @error('particulars') <p class="mt-1 text-xs text-red-500 font-medium">{{ $message }}</p> @enderror
                     </div>
 
@@ -55,7 +55,7 @@
                         <label class="block text-sm font-medium text-gray-700 mb-1">Quantity to Remove <span class="text-red-400">*</span></label>
                         <div class="relative">
                             <input type="number" name="qty" min="1" class="w-full rounded-lg border-gray-200 pl-10 focus:border-red-500 focus:ring-red-500 transition-all shadow-sm font-bold text-red-600" value="{{ old('qty') }}" required>
-                            <span class="absolute left-3 top-2 text-gray-400">📦</span>
+                        
                         </div>
                         @error('qty') <p class="mt-1 text-xs text-red-500 font-medium">{{ $message }}</p> @enderror
                     </div>
@@ -73,11 +73,18 @@
                         <input type="text" class="w-full rounded-lg border-gray-100 bg-gray-50 text-gray-400 cursor-not-allowed text-sm italic" value="Will be auto-generated" disabled>
                     </div>
                 </div>
-
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Internal Remarks</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Waybill Number</label>
+                        <input type="text" name="waybill" class="w-full rounded-lg border-gray-200 focus:border-red-500 focus:ring-red-500 transition-all shadow-sm" value="{{ old('waybill') }}" placeholder="Waybill number">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Additional Remarks</label>
                     <textarea name="remarks" rows="3" class="w-full rounded-lg border-gray-200 focus:border-red-500 focus:ring-red-500 transition-all shadow-sm" placeholder="Additional details about the condition or client...">{{ old('remarks') }}</textarea>
                     @error('remarks') <p class="mt-1 text-xs text-red-500 font-medium">{{ $message }}</p> @enderror
+                </div>
+                
                 </div>
             </div>
         </div>

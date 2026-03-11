@@ -55,7 +55,7 @@
                                 </td>
                                 <td class="px-6 py-4 text-center">
                                     <span class="text-sm font-medium text-gray-600 bg-gray-100 px-2.5 py-1 rounded-md">
-                                        {{ number_format($avr->capacity) }}W
+                                        {{ $avr->capacity}}KVA
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-center">

@@ -36,7 +36,7 @@
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Battery Type</label>
-                        <select name="type" class="w-full rounded-lg border-gray-200 focus:border-orange-500 focus:ring-orange-500 transition-all shadow-sm bg-white">
+                        <select name="chemistry" class="w-full rounded-lg border-gray-200 focus:border-orange-500 focus:ring-orange-500 transition-all shadow-sm bg-white">
                             <option value="">Select Battery Type</option>
                             <option value="Tubular">Tubular</option>
                             <option value="AGM / VRLA">AGM / VRLA</option>
@@ -54,11 +54,30 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Capacity (Ah) <span class="text-red-400">*</span></label>
-                        <div class="relative">
-                            <input type="number" name="capacity" step="0.01" class="w-full rounded-lg border-gray-200 pl-10 focus:border-orange-500 focus:ring-orange-500 transition-all shadow-sm font-bold" placeholder="200" value="{{ old('capacity') }}" required>
-                            <span class="absolute left-3 top-2 text-gray-400 text-xs">Ah</span>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Capacity <span class="text-red-400">*</span>
+                        </label>
+                        <div class="flex shadow-sm rounded-lg overflow-hidden border border-gray-200 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all">
+                            {{-- Icon & Number Input --}}
+                            <div class="relative flex-grow">
+                                
+                                <input type="number" 
+                                    name="power_value" 
+                                    step="0.01" 
+                                    class="w-full border-none pl-9 py-2.5 focus:ring-0 text-sm" 
+                                    placeholder="1200" 
+                                    value="{{ old('power_value') }}" 
+                                    required>
+                            </div>
+                            
+                            {{-- Unit Dropdown --}}
+                            <select name="power_unit" class="bg-gray-50 border-none border-l border-gray-200 text-gray-600 text-sm px-4 focus:ring-0 cursor-pointer">
+                                <option value="KWh" {{ old('power_unit') == 'KWh' ? 'selected' : '' }}>KWh</option>
+                                <option value="Ah" {{ old('power_unit') == 'Ah' ? 'selected' : '' }}>Ah</option>
+                            </select>
                         </div>
+                        
+                        @error('power_value') <p class="mt-1 text-xs text-red-500 font-medium">{{ $message }}</p> @enderror
                     </div>
                 </div>
             </div>

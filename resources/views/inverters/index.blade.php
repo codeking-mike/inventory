@@ -58,7 +58,7 @@
                                     <div class="text-xs text-gray-500 font-mono">{{ $inverter->model ?? 'Standard' }}</div>
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-600 italic">
-                                    {{ number_format($inverter->power_rating) }}W
+                                    {{ $inverter->power_rating }}
                                 </td>
                                 <td class="px-6 py-4">
                                     @php 

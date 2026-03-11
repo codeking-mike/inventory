@@ -8,10 +8,24 @@
         <div>
             <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Inventory Logs</h1>
             <p class="text-sm text-gray-500 mt-1">A complete audit trail of all stock movements and adjustments.</p>
+            @if(!empty($type))
+                <p class="text-sm text-indigo-600 mt-1">Showing <strong>{{ $type }}</strong> transactions only.</p>
+            @endif
         </div>
         
        <div class="flex items-center space-x-3">
-            <a href="{{ route('transactions.export') }}" class="inline-flex items-center px-4 py-2 bg-white border border-gray-200 text-sm font-bold rounded-lg text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200 transition-all shadow-sm group">
+            {{-- filter dropdown --}}
+            <form method="GET" action="{{ route('transactions.index') }}" class="inline-flex items-center">
+                <label for="type" class="sr-only">Filter</label>
+                <select id="type" name="type" onchange="this.form.submit()"
+                    class="block w-full pl-3 pr-10 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                    <option value="" {{ $type == '' ? 'selected' : '' }}>All</option>
+                    <option value="Added" {{ $type == 'Added' ? 'selected' : '' }}>Added</option>
+                    <option value="Removed" {{ $type == 'Removed' ? 'selected' : '' }}>Removed</option>
+                </select>
+            </form>
+
+            <a href="{{ route('transactions.export') }}{{ !empty($type) ? '?type='.$type : '' }}" class="inline-flex items-center px-4 py-2 bg-white border border-gray-200 text-sm font-bold rounded-lg text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200 transition-all shadow-sm group">
                 <span class="mr-2 group-hover:scale-110 transition-transform">📊</span> 
                 Export to Excel
             </a>
@@ -21,15 +35,15 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
             <p class="text-xs font-semibold text-gray-400 uppercase">Total Transactions</p>
-            <p class="text-2xl font-bold text-gray-900">{{ $transactions->count() }}</p>
+            <p class="text-2xl font-bold text-gray-900">{{ $totalTransactions }}</p>
         </div>
         <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
             <p class="text-xs font-semibold text-emerald-500 uppercase">Items Added</p>
-            <p class="text-2xl font-bold text-gray-900">{{ $transactions->where('type', 'addition')->sum('quantity') }}</p>
+            <p class="text-2xl font-bold text-gray-900">{{ $itemsAdded }}</p>
         </div>
         <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
             <p class="text-xs font-semibold text-red-500 uppercase">Items Removed</p>
-            <p class="text-2xl font-bold text-gray-900">{{ $transactions->where('type', 'removal')->sum('quantity') }}</p>
+            <p class="text-2xl font-bold text-gray-900">{{ $itemsRemoved }}</p>
         </div>
     </div>
 
@@ -68,8 +82,8 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4 text-center">
-                               <p class="text-sm text-gray-600 max-w-xs truncate" title="{{ $log->remarks }}">
-                                    {{ $log->remarks ?? 'No remarks provided.' }}
+                               <p class="text-sm text-gray-600 max-w-xs truncate" title="{{ $log->particulars }}">
+                                    {{ $log->particulars ?? 'No particulars provided.' }}
                                 </p>
                             </td>
                             <td class="px-6 py-4 text-center">

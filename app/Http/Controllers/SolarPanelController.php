@@ -44,7 +44,6 @@ class SolarPanelController extends Controller
             'cost_price' => 'nullable|numeric|min:0',
             'selling_price' => 'nullable|numeric|min:0',
             'description' => 'nullable|string',
-            'remarks' => 'nullable|string|max:255',
         ]);
 
         $solarPanel = SolarPanel::create($validated);
@@ -54,9 +53,10 @@ class SolarPanelController extends Controller
             'date' => now()->toDateString(),
             'reference' => '', // Will be updated below
             'product_type' => 'solar_panel',
+            'transaction_type' => 'Added',
             'particulars' => 'Added ' . $solarPanel->product_name . ' (' . $solarPanel->model . ')',
             'qty' => $solarPanel->quantity_in_stock,
-            'remarks' => $request->remarks ?? 'Initial stock added'
+            'remarks' => 'Initial stock added'
         ]);
 
         // Generate and update reference with format: 000 + date + id
@@ -99,7 +99,6 @@ class SolarPanelController extends Controller
             'cost_price' => 'nullable|numeric|min:0',
             'selling_price' => 'nullable|numeric|min:0',
             'description' => 'nullable|string',
-            'remarks' => 'nullable|string|max:255',
         ]);
 
         $solarPanel->update($validated);
@@ -111,9 +110,10 @@ class SolarPanelController extends Controller
                 'date' => now()->toDateString(),
                 'reference' => '', // Will be updated below
                 'product_type' => 'solar_panel',
+                'transaction_type' => ($qtyDifference > 0 ? 'Added' : 'Removed'),
                 'particulars' => ($qtyDifference > 0 ? 'Stock added: ' : 'Stock removed: ') . $solarPanel->product_name,
                 'qty' => $qtyDifference,
-                'remarks' => $request->remarks ?? 'Quantity updated from ' . $oldQty . ' to ' . $solarPanel->quantity_in_stock
+                'remarks' => 'Quantity updated from ' . $oldQty . ' to ' . $solarPanel->quantity_in_stock
             ]);
 
             // Generate and update reference with format: 000 + date + id
@@ -145,7 +145,9 @@ class SolarPanelController extends Controller
         $validated = $request->validate([
             'solar_panel_id' => 'required|exists:solar_panels,id',
             'quantity' => 'required|integer|min:1',
+            'waybill' => 'nullable|string|max:255',
             'remarks' => 'nullable|string|max:255',
+            'reason' => 'nullable|string|max:255',
         ]);
 
         $solarPanel = SolarPanel::findOrFail($validated['solar_panel_id']);
@@ -162,8 +164,10 @@ class SolarPanelController extends Controller
             'date' => now()->toDateString(),
             'reference' => '', // Will be updated below
             'product_type' => 'solar_panel',
-            'particulars' => 'Removed ' . $validated['quantity'] . ' of ' . $solarPanel->product_name,
-            'qty' => -$validated['quantity'],
+            'transaction_type' => 'Removed',
+            'particulars' => $validated['reason'] ?? 'Stock removal of ' . $validated['quantity'] . ' units',
+            'waybill_number' => $validated['waybill'],
+            'qty' => $validated['quantity'],
             'remarks' => $validated['remarks'] ?? 'Stock removal'
         ]);
 
@@ -237,7 +241,7 @@ class SolarPanelController extends Controller
             200,
             [
                 'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                'Content-Disposition' => 'attachment; filename="inventory_logs_'.now()->format('Y-m-d').'.xlsx"',
+                'Content-Disposition' => 'attachment; filename="solarpanel_inventory_'.now()->format('Y-m-d').'.xlsx"',
                 'Cache-Control' => 'max-age=0',
             ]
         );

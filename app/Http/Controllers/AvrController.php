@@ -49,6 +49,7 @@ class AvrController extends Controller
             'date' => now()->toDateString(),
             'reference' => '', // Updated below
             'product_type' => 'avr',
+            'transaction_type' => 'Added',
             'particulars' => 'Added ' . $avr->product_name . ' (' . $avr->model . ')',
             'qty' => $avr->quantity_in_stock,
             'remarks' => $request->remarks ?? 'Initial stock added'
@@ -142,6 +143,7 @@ class AvrController extends Controller
             'particulars' => 'required|string|max:255',
             'qty' => 'required|integer|min:1',
             'date' => 'required|date',
+            'waybill' => 'nullable|string|max:255',
             'remarks' => 'nullable|string|max:255',
         ]);
 
@@ -161,8 +163,10 @@ class AvrController extends Controller
             'date' => $validated['date'],
             'reference' => '',
             'product_type' => 'avr',
+            'transaction_type' => 'Removed',
             'particulars' => $validated['particulars'],
-            'qty' => -$validated['qty'],
+            'waybill_number' => $validated['waybill'],
+            'qty' => $validated['qty'],
             'remarks' => $validated['remarks'] ?? 'AVR removed from stock'
         ]);
 

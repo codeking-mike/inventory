@@ -9,6 +9,7 @@ use App\Http\Controllers\BatteryController;
 use App\Http\Controllers\UpsController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\SearchController;
 
 Route::redirect('/', '/dashboard');
 
@@ -74,5 +75,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/ups-remove', [UpsController::class, 'showRemovalForm'])->name('ups.remove-form');
     Route::post('/ups-remove', [UpsController::class, 'storeRemoval'])->name('ups.store-removal');  
     Route::resource('ups', UpsController::class);
+
+    //search route
+    Route::get('/search', [SearchController::class, 'globalSearch'])->name('global.search');
 });
 

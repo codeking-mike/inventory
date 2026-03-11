@@ -35,18 +35,18 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Power Capacity (Watts) <span class="text-red-400">*</span></label>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Power Capacity (KVA) <span class="text-red-400">*</span></label>
                         <div class="relative">
                             <input type="number" name="power_capacity" step="0.01" class="w-full rounded-lg border-gray-200 pl-10 focus:border-purple-500 focus:ring-purple-500 transition-all shadow-sm font-bold" placeholder="1000" value="{{ old('power_capacity') }}" required>
-                            <span class="absolute left-3 top-2 text-gray-400">W</span>
+                           
                         </div>
                     </div>
 
                     <div class="md:col-span-1">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Typical Backup Time (Minutes)</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Estimated Backup Time (Minutes)</label>
                         <div class="relative">
                             <input type="number" name="backup_time" step="0.01" class="w-full rounded-lg border-gray-200 pl-10 focus:border-purple-500 focus:ring-purple-500 transition-all shadow-sm" placeholder="15" value="{{ old('backup_time') }}">
-                            <span class="absolute left-3 top-2 text-gray-400">⏱️</span>
+                            
                         </div>
                     </div>
                 </div>

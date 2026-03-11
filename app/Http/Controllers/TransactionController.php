@@ -13,10 +13,33 @@ class TransactionController extends Controller
     /**
      * Display the specified transaction.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $transactions = Transaction::orderBy('created_at', 'desc')->paginate(20);
-        return view('transactions.index', compact('transactions'));
+        $type = $request->get('type');
+
+        // base query for listing
+        $query = Transaction::orderBy('created_at', 'desc');
+        if (in_array($type, ['Added', 'Removed'])) {
+            $query->where('transaction_type', $type);
+        }
+
+        // clone for statistics before pagination
+        $statsQuery = clone $query;
+
+        $transactions = $query->paginate(20)->appends(['type' => $type]);
+
+        // compute summary numbers from statsQuery (same conditions as listing)
+        $totalTransactions = $statsQuery->count();
+        $itemsAdded = (clone $statsQuery)->where('transaction_type', 'Added')->sum('qty');
+        $itemsRemoved = (clone $statsQuery)->where('transaction_type', 'Removed')->sum('qty');
+
+        return view('transactions.index', compact(
+            'transactions',
+            'type',
+            'totalTransactions',
+            'itemsAdded',
+            'itemsRemoved'
+        ));
     }
 
 
@@ -27,10 +50,15 @@ class TransactionController extends Controller
     }
 
     
-    //export data to excel
-    public function export(): StreamedResponse
+    //export data to excel (accept optional filter by transaction_type)
+    public function export(Request $request): StreamedResponse
     {
-        $transactions = Transaction::orderBy('created_at', 'desc')->get();
+        $type = $request->get('type');
+        $query = Transaction::orderBy('created_at', 'desc');
+        if (in_array($type, ['Added', 'Removed'])) {
+            $query->where('transaction_type', $type);
+        }
+        $transactions = $query->get();
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 

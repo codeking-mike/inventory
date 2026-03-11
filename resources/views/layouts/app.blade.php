@@ -88,5 +88,67 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('globalSearchInput');
+    const resultsContainer = document.getElementById('searchResults');
+
+    searchInput.addEventListener('input', function() {
+        const query = this.value;
+
+        if (query.length < 2) {
+            resultsContainer.classList.add('hidden');
+            return;
+        }
+
+        // use route helper so path is always in sync with web.php
+        fetch(`{{ route('global.search') }}?query=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(data => {
+                let html = '';
+                let totalResults = 0;
+
+                for (const [category, items] of Object.entries(data)) {
+                    if (items.length > 0) {
+                        totalResults += items.length;
+                        html += `<div class="p-2">
+                                    <h4 class="text-[10px] font-black uppercase tracking-widest text-gray-400 px-3 py-1 mb-1 border-b border-gray-50">${category}</h4>`;
+                        
+                        items.forEach(item => {
+                            // Determine the correct route dynamically based on category
+                            const routeName = category.toLowerCase().replace(' ', '-');
+                            html += `
+                                <a href="/${routeName}/${item.id}" class="flex items-center justify-between px-3 py-2.5 hover:bg-indigo-50 rounded-xl transition group">
+                                    <div>
+                                        <p class="text-sm font-bold text-gray-800 group-hover:text-indigo-700">${item.product_name}</p>
+                                        <p class="text-xs text-gray-500">${item.model || 'No Model'}</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Stock</p>
+                                        <p class="text-sm font-black ${item.quantity_in_stock > 5 ? 'text-gray-700' : 'text-rose-500'}">${item.quantity_in_stock}</p>
+                                    </div>
+                                </a>`;
+                        });
+                        html += `</div>`;
+                    }
+                }
+
+                if (totalResults === 0) {
+                    html = `<div class="p-8 text-center"><p class="text-gray-400 italic text-sm">No items found matching "${query}"</p></div>`;
+                }
+
+                resultsContainer.innerHTML = html;
+                resultsContainer.classList.remove('hidden');
+            });
+    });
+
+    // Close results when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!searchInput.contains(e.target) && !resultsContainer.contains(e.target)) {
+            resultsContainer.classList.add('hidden');
+        }
+    });
+});
+</script>
 </body>
 </html>

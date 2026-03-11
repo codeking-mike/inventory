@@ -16,7 +16,21 @@
             </span>
         </div>
     </div>
+    <div class="relative max-w-2xl mx-auto mb-10">
+    {{-- Search Input (wrapped in form to allow Enter key navigation) --}}
+    <form action="{{ route('global.search') }}" method="GET" class="relative group">
+        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-indigo-500 transition-colors">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+        </div>
+        <input type="text" id="globalSearchInput" name="query" autocomplete="off"
+            placeholder="Search inventory (e.g. 'Luminous', '200Ah', 'Monocrystalline')..." 
+            class="w-full pl-12 pr-4 py-4 bg-white border border-gray-100 rounded-2xl shadow-sm focus:ring-4 focus:ring-indigo-50 focus:border-indigo-500 outline-none transition-all text-gray-700">
+    </form>
 
+    {{-- Results Dropdown --}}
+    <div id="searchResults" class="hidden absolute z-50 w-full mt-2 bg-white rounded-2xl border border-gray-100 shadow-2xl max-h-[450px] overflow-y-auto p-2">
+        </div>
+    </div>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
         @php
             $stats = [
@@ -137,4 +151,5 @@
         
     </div>
 </div>
+
 @endsection
